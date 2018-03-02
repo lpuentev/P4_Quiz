@@ -148,7 +148,7 @@ exports.testCmd = (rl, id) => {
 
           rl.question(colorize(quiz.question+'? ', 'red'), resp => {
 
-            if(resp === quiz.answer){
+            if(normalize(resp) === normalize(quiz.answer)){
 
               log(`Su respuesta es:`);
               biglog('Correcta', 'green');
@@ -198,7 +198,7 @@ exports.playCmd = rl => {
     const quiz = model.getByIndex(toBeResolved[id]);
     toBeResolved.splice(id,1);
     
-      rl.question(quiz.question + ' ', resp => {
+      rl.question(colorize(quiz.question+'? ', 'red'), resp => {
 
         if(normalize(resp) === normalize(quiz.answer)){
             score ++;
