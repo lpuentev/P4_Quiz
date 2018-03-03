@@ -150,14 +150,14 @@ exports.testCmd = (rl, id) => {
 
             if(normalize(resp) === normalize(quiz.answer)){
 
-              log(`Su respuesta es:`);
-              biglog('Correcta', 'green');
+              log(`Su respuesta es correcta.`);
+              log('Correcta', 'green');
               rl.prompt();
 
             } else{
 
-              log(`Su respuesta es:`);
-              biglog('Incorrecta', 'red');
+              log(`Su respuesta es incorrecta.`);
+              log('Incorrecta', 'red');
               rl.prompt();
 
             }
