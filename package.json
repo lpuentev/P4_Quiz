@@ -1,3 +1,5 @@
+
+
 {
   "name": "quiz",
   "version": "1.0.0",
@@ -16,6 +18,8 @@
   "license": "Unlicense",
   "dependencies": {
     "chalk": "^2.3.1",
-    "figlet": "^1.2.0"
+    "figlet": "^1.2.0",
+    "sequelize": "^4.35.2",
+    "sqlite3": "^3.1.13"
   }
 }
