@@ -238,14 +238,6 @@ exports.testCmd = (rl, id) => {
 };
 
 
-
-
-
-
-
-
-
-
 /**
 * Pregunta todos los quizzes existentes en el modelo en orden aleatorio.
 * Se gana si se contesta a todos satisfactoriamente.
@@ -256,7 +248,7 @@ exports.playCmd = rl => {
 
   let toBeResolved = [];
 
-  for(i=0; i<model.count(); i++){
+  for(i=0; i<models.quiz.count(); i++){
     toBeResolved[i]=i;
   }
   const playOne = () => {
@@ -269,7 +261,7 @@ exports.playCmd = rl => {
     } else {
 
     let id = Math.floor(Math.random()*toBeResolved.length);
-    const quiz = model.getByIndex(toBeResolved[id]);
+    const quiz = models.quiz.getByIndex(toBeResolved[id]);
     toBeResolved.splice(id,1);
     
       rl.question(colorize(quiz.question+'? ', 'red'), resp => {
