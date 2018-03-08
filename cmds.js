@@ -218,7 +218,7 @@ exports.testCmd = (rl, id) => {
       throw new Error(`No existe un quiz asociado al id=${id}.`);
     }
 
-    return makeQuestion(rl, quiz.question + '? ' )
+    return makeQuestion(rl, colorize(quiz.question + '? ', 'red'))
       .then(a => {
         if(normalize(quiz.answer) === normalize(a)){
           log(` Correcto `);
@@ -242,9 +242,8 @@ exports.testCmd = (rl, id) => {
 * Pregunta todos los quizzes existentes en el modelo en orden aleatorio.
 * Se gana si se contesta a todos satisfactoriamente.
 */
-exports.playCmd = rl => {
-
-  let score = 0
+exports.playCmd = (rl, id) => {
+    let score = 0
 
   let toBeResolved = [];
 
@@ -263,27 +262,36 @@ exports.playCmd = rl => {
     let id = Math.floor(Math.random()*toBeResolved.length);
     const quiz = models.quiz.getByIndex(toBeResolved[id]);
     toBeResolved.splice(id,1);
-    
-      rl.question(colorize(quiz.question+'? ', 'red'), resp => {
 
-        if(normalize(resp) === normalize(quiz.answer)){
-            score ++;
-            log(`CORRECTO - Lleva ` + score + ` aciertos.`);
-            playOne();
 
+  validateId(id)
+  .then(id => models.quiz.findById(id))
+  .then(quiz => {
+    if(!quiz) {
+      throw new Error(`No existe un quiz asociado al id=${id}.`);
+    }
+
+    return makeQuestion(rl, colorize(quiz.question + '? ', 'red'))
+      .then(a => {
+        if(normalize(quiz.answer) === normalize(a)){
+          log(` Correcto `);
         } else {
-              log(`INCORRECTO.`);
-              log(`Fin del juego. Aciertos: ` + score);
-              biglog(score, 'magenta');
-              rl.prompt();
-
+          log(` Incorrecto `);
         }
-
       });
-    }
-    }
-    playOne();
-    };
+    
+  })
+  .catch(error => {
+    errorlog(error.message);
+  })
+  .then(() => {
+    rl.prompt();
+  });
+  }
+  }
+  playOne();
+
+};
 
 /**
 * Muestra los nombres de los autores de la práctica.
