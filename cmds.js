@@ -238,60 +238,42 @@ exports.testCmd = (rl, id) => {
 };
 
 
+
 /**
 * Pregunta todos los quizzes existentes en el modelo en orden aleatorio.
 * Se gana si se contesta a todos satisfactoriamente.
 */
 exports.playCmd = (rl, id) => {
-    let score = 0
+let score = 0
 
-  let toBeResolved = [];
-
-  for(i=0; i<models.quiz.count(); i++){
-    toBeResolved[i]=i;
-  }
-  const playOne = () => {
-
-    if (toBeResolved === undefined || toBeResolved.length == 0) {
-        log(`No hay nada más que preguntar.`);
-        log(`Fin del juego. Aciertos: ` + score);
-        biglog(score, 'magenta');
-        rl.prompt();
-    } else {
-
-    let id = Math.floor(Math.random()*toBeResolved.length);
-    const quiz = models.quiz.getByIndex(toBeResolved[id]);
-    toBeResolved.splice(id,1);
-
-
-  validateId(id)
-  .then(id => models.quiz.findById(id))
-  .then(quiz => {
-    if(!quiz) {
-      throw new Error(`No existe un quiz asociado al id=${id}.`);
-    }
+models.quiz.findAll()
+.each(quiz => {
+        
 
     return makeQuestion(rl, colorize(quiz.question + '? ', 'red'))
       .then(a => {
         if(normalize(quiz.answer) === normalize(a)){
-          log(` Correcto `);
+          score ++;
+          log(`CORRECTO - Lleva ` + score + ` aciertos.`);
+
         } else {
-          log(` Incorrecto `);
+          log(`INCORRECTO.`);
+            log(`Fin del juego. Aciertos: ` + score);
+            biglog(score, 'magenta');
+            rl.prompt();
         }
       });
-    
-  })
+    })
+  
   .catch(error => {
     errorlog(error.message);
   })
   .then(() => {
     rl.prompt();
   });
-  }
-  }
-  playOne();
-
+ 
 };
+
 
 /**
 * Muestra los nombres de los autores de la práctica.
