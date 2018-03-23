@@ -1,5 +1,4 @@
 
-
 const Sequelize = require('sequelize');
 const {log, biglog, errorlog, colorize} = require("./out");
 
@@ -243,35 +242,62 @@ exports.testCmd = (rl, id) => {
 * Pregunta todos los quizzes existentes en el modelo en orden aleatorio.
 * Se gana si se contesta a todos satisfactoriamente.
 */
-exports.playCmd = (rl, id) => {
-let score = 0
+exports.playCmd = rl => {
 
-models.quiz.findAll()
-.each(quiz => {
-        
+  let score = 0;
+  let toBeResolved = [];
+  const playOne = () => {
+    if (toBeResolved.length === 0) {
+    log('No hay nada mas que preguntar.');
+    log('Fin del examen. Aciertos: ' + score);
+    biglog(score,'magenta');
+    rl.prompt();
 
-    return makeQuestion(rl, colorize(quiz.question + '? ', 'red'))
+      } else {
+
+    let id = Math.round(Math.random()*(toBeResolved.length-1));
+    let idQuiz = toBeResolved[id];
+    toBeResolved.splice(id,1);
+    
+    models.quiz.findById(idQuiz)
+
+    .then(quiz => {
+      return makeQuestion(rl,quiz.question + " ? ")
       .then(a => {
-        if(normalize(quiz.answer) === normalize(a)){
-          score ++;
-          log(`CORRECTO - Lleva ` + score + ` aciertos.`);
 
-        } else {
-          log(`INCORRECTO.`);
+      if(normalize(quiz.answer) === normalize(a)) {
+        score++;
+        log('CORRECTO - Lleva ' + score + ' aciertos.');
+        playOne();
+
+      } else {        
+        log(`INCORRECTO.`);
             log(`Fin del juego. Aciertos: ` + score);
             biglog(score, 'magenta');
-            rl.prompt();
-        }
-      });
+        rl.prompt();
+
+
+      }
+
+    });
+
     })
-  
-  .catch(error => {
+    .catch(error => {
     errorlog(error.message);
+    });
+  }
+  };
+
+  models.quiz.findAll()
+  .each( quiz => {
+    toBeResolved.push(quiz.id);
   })
   .then(() => {
-    rl.prompt();
+    playOne();
+  })
+  .catch(error => {
+    errorlog("Error en array:" + error.message);
   });
- 
 };
 
 
