@@ -11,7 +11,7 @@ const {models} = require('./model');
 * @param rl Objeto readline usado para implementar el CLI.
 */
 exports.helpCmd = (socket, rl) => {
-  log("Commandos:");
+      log(socket, "Commandos:");
       log(socket, " h|help - Muestra esta ayuda.");
       log(socket, " list - Listar los quizzes existentes.");
       log(socket, " show <id> - Muestra la pregunta y la respuesta el quiz indicado.");
@@ -129,7 +129,7 @@ exports.addCmd = (socket, rl) => {
   })
   .catch(Sequelize.ValidationError, error => {
     errorlog(socket, 'El quiz es erroneo:');
-    error.errors.forEach(({message}) => errorlog(message));
+    error.errors.forEach(({message}) => errorlog(socket, message));
   })
   .catch(error => {
     errorlog(socket, error.message);
@@ -190,7 +190,7 @@ exports.editCmd = (socket, rl, id) => {
   })
   .catch(Sequelize.ValidationError, error => {
     errorlog(socket, 'El quiz es erroneo:');
-    error.errors.forEach(({message}) => errorlog(message));
+    error.errors.forEach(({message}) => errorlog(socket, message));
   })
   .catch(error => {
     errorlog(socket, error.message);

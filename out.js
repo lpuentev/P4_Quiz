@@ -25,6 +25,7 @@ const colorize = (msg, color) => {
 * @param color  Color del texto.
 */
 const log = (socket, msg, color) => {
+  
   socket.write(colorize(msg, color) + "\n");
 };
 
